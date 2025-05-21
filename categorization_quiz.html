@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Categorization Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    .quiz-container {
+      max-width: 600px;
+      margin: auto;
+      text-align: center;
+    }
+    .item {
+      padding: 10px;
+      margin: 10px;
+      background-color: #f0f0f0;
+      cursor: move;
+    }
+    .category {
+      border: 2px dashed #ccc;
+      padding: 20px;
+      margin: 10px;
+      min-height: 100px;
+    }
+    .category.over {
+      background-color: #e0ffe0;
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <h2>Drag the items into the correct category</h2>
+    <div id="items">
+      <div class="item" draggable="true" data-category="Fruit">Apple</div>
+      <div class="item" draggable="true" data-category="Fruit">Banana</div>
+      <div class="item" draggable="true" data-category="Animal">Cat</div>
+      <div class="item" draggable="true" data-category="Animal">Dog</div>
+    </div>
+
+    <div class="category" data-category="Fruit">Fruit</div>
+    <div class="category" data-category="Animal">Animal</div>
+
+    <button onclick="checkAnswers()">Check Answers</button>
+    <p id="result"></p>
+  </div>
+
+  <script>
+    const items = document.querySelectorAll('.item');
+    const categories = document.querySelectorAll('.category');
+
+    items.forEach(item => {
+      item.addEventListener('dragstart', dragStart);
+    });
+
+    categories.forEach(category => {
+      category.addEventListener('dragover', dragOver);
+      category.addEventListener('drop', drop);
+      category.addEventListener('dragleave', dragLeave);
+    });
+
+    let draggedItem = null;
+
+    function dragStart(e) {
+      draggedItem = e.target;
+    }
+
+    function dragOver(e) {
+      e.preventDefault();
+      this.classList.add('over');
+    }
+
+    function drop(e) {
+      e.preventDefault();
+      this.classList.remove('over');
+      this.appendChild(draggedItem);
+    }
+
+    function dragLeave(e) {
+      this.classList.remove('over');
+    }
+
+    function checkAnswers() {
+      let correct = 0;
+      let total = items.length;
+
+      categories.forEach(category => {
+        const categoryName = category.getAttribute('data-category');
+        const children = category.querySelectorAll('.item');
+
+        children.forEach(child => {
+          if (child.getAttribute('data-category') === categoryName) {
+            correct++;
+          }
+        });
+      });
+
+      const result = document.getElementById('result');
+      result.textContent = `You got ${correct} out of ${total} correct.`;
+    }
+  </script>
+</body>
+</html>
